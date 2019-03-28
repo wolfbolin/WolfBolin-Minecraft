@@ -1,1 +1,1 @@
-# wolfbolin-mc
+# WolfBolin-Minecraft

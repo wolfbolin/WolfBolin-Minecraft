@@ -1,0 +1,15 @@
+{
+    "name": "wolfbolin/wmc-server",
+    "authors": [
+        {
+            "name": "wolfbolin",
+            "email": "wolfbolin@foxmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^3.12",
+        "qcloud/cos-sdk-v5": ">=1.0",
+        "sentry/sentry": "^1.0",
+        "ext-zip": "*"
+    }
+}
