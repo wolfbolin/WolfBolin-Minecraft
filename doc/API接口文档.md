@@ -6,7 +6,7 @@
 
 * 方法：GET
 
-* 路径：/back/list
+* 路径：`/backup/list`
 
 * 请求参数：无
 
@@ -38,18 +38,19 @@
   }
   ```
 
-  ### 添加实时备份
+### 添加备份
 
-* 方法：GET
 
-* 路径：/back/add
+* 方法：POST
+
+* 路径：`/backup/world`
 
 * 请求参数：无
 
 * 请求示例：
 
   ```
-  {{host}}/backup/add
+  {{host}}/backup/world
   ```
 
 * 响应参数：有
@@ -60,8 +61,57 @@
   {
       "status": "success",
       "ETag": "af2a54d47f25a38bdcdc9b05c3013919",
-      "URL": "https://backup-1253362441.cos.ap-chengdu.myqcloud.com/Minecraft/world/world-1553801467.zip",
+      "URL": "https://cos.mc.wolfbolin.com/Minecraft/world/world-1553801467.zip",
       "file_name": "world-1553801467.zip"
   }
   ```
 
+### 下载备份
+
+* 方法：GET
+
+* 路径：`/backup/world-[0-9]{10}`
+
+* 请求参数：无
+
+* 请求示例：
+
+  ```
+  {{host}}/backup/world-1553957502
+  ```
+
+* 响应参数：有
+
+* 响应示例：
+
+  ```json
+  {
+      "status": "success",
+      "URL": "https://cos.mc.wolfbolin.com/Minecraft/world/world-1553801467.zip"
+  }
+  ```
+
+### 删除备份
+
+* 方法：DELETE
+
+* 路径：`/backup/world-[0-9]{10}`
+
+* 请求参数：无
+
+* 请求示例：
+
+  ```
+  {{host}}/backup/world-1553957502
+  ```
+
+* 响应参数：有
+
+* 响应示例：
+
+  ```json
+  {
+      "status": "success",
+      "operate": "NWNhMGRlMThfNGQ5ZTU4NjRfNmE5Zl8zZWE0NDI="
+  }
+  ```

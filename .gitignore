@@ -1,7 +1,8 @@
 # For wolfbolin
 .idea
 config.php
-
+server/data/
+server/temp/
 
 # For Laravel
 vendor/

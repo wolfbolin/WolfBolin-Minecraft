@@ -10,13 +10,6 @@ use \Slim\App;
 use \Slim\Http\Request;
 use \Slim\Http\Response;
 
-$app->redirect('/', '/hello-mc', 301);
-
-$app->get('/hello-mc', function (Request $request, Response $response) {
-    $result = ['status' => 'success', 'info' => 'Hello, Minecraft!'];
-    return $response->withJson($result);
-});
-
 $app->group('/backup', function (App $app) {
     $app->get('/list', function (Request $request, Response $response) {
         // 获取对象储存信息
@@ -28,16 +21,7 @@ $app->group('/backup', function (App $app) {
             ])->toArray();
         } catch (\Exception $e) {
             $sentry = $this->get('sentry_client');
-            $sentry->captureException($e, array(
-                'extra' => array(
-                    'URL' => $request->getUri(),
-                    'Method' => $request->getMethod(),
-                    'Body' => $request->getBody()
-                ),
-                'tags' => array(
-                    'version' => $this['Version']
-                )
-            ));
+            $sentry->captureException($e);
             goto Bad_request;
         }
 
@@ -69,30 +53,60 @@ $app->group('/backup', function (App $app) {
         return \WolfBolin\Slim\HTTP\Bad_request($response);
     });
 
-    $app->get('/add', function (Request $request, Response $response) {
+    $app->get('/{name:world-[0-9]{10}}', function(Request $request, Response $response, $args){
+        // 获取访问参数
+        $file_name = $args['name'];
+
+        try {
+            $cos_client = $this->get('cos_client');
+            $command = $cos_client->getCommand('putObject', array(
+                'Bucket' => $this->get('COS')['Bucket'],
+                'Key' => 'Minecraft/world/' . $file_name.'.zip'
+            ));
+            $signedUrl = $command->createPresignedUrl('+10 minutes');
+        } catch (\Exception $e) {
+            $sentry = $this->get('sentry_client');
+            $sentry->captureException($e);
+            goto Bad_request;
+        }
+
+        // 将字典数据写入请求响应
+        $result = [
+            'status' => 'success',
+            'url' => $signedUrl,
+        ];
+        return $response->withJson($result);
+        // 异常访问出口
+        Bad_request:
+        return \WolfBolin\Slim\HTTP\Bad_request($response);
+    })->add(\WolfBolin\Slim\Middleware\x_auth_token());
+
+    $app->post('/world', function (Request $request, Response $response) {
         // 生成压缩包
+        $zip_path = $this->get('Temp_file_path');
         $zip_name = 'world-' . time() . '.zip';
-        $zip_path = __DIR__ . '/../temp/';
-        $data_path = __DIR__ . '/../data/';
+        $data_path = $this->get('Minecraft_path');
         $world_path = $data_path . 'world/';
+
         // 递归添加文件
         $zip = new ZipArchive();
         $result = $zip->open($zip_path . $zip_name, ZipArchive::CREATE);
-        if ($result === TRUE) {
-            \WolfBolin\Util\Zip\addFileToZip($zip, $world_path, strlen($data_path));
-            $zip->close(); //关闭处理的zip文件
+        if ($result === TRUE && file_exists($zip_path)) {
+            // 验证数据文件路径
+            if(file_exists($world_path)){
+                // 添加World路径
+                \WolfBolin\Util\Zip\addFileToZip($zip, $world_path, strlen($data_path));
+                // 添加properties文件
+                $zip->addFile($data_path.'server.properties', 'server.properties');
+                $zip->close();
+            }else{
+                $sentry = $this->get('sentry_client');
+                $sentry->captureMessage("数据文件不存在");
+                goto Bad_request;
+            }
         } else {
             $sentry = $this->get('sentry_client');
-            $sentry->captureMessage("数据压缩过程出现异常", array(
-                'extra' => array(
-                    'URL' => $request->getUri(),
-                    'Method' => $request->getMethod(),
-                    'Body' => $request->getBody()
-                ),
-                'tags' => array(
-                    'version' => $this['Version']
-                )
-            ));
+            $sentry->captureMessage("数据压缩过程出现异常");
             goto Bad_request;
         }
 
@@ -107,16 +121,7 @@ $app->group('/backup', function (App $app) {
 
         } catch (\Exception $e) {
             $sentry = $this->get('sentry_client');
-            $sentry->captureException($e, array(
-                'extra' => array(
-                    'URL' => $request->getUri(),
-                    'Method' => $request->getMethod(),
-                    'Body' => $request->getBody()
-                ),
-                'tags' => array(
-                    'version' => $this['Version']
-                )
-            ));
+            $sentry->captureException($e);
             goto Bad_request;
         }
 
@@ -136,6 +141,36 @@ $app->group('/backup', function (App $app) {
         return \WolfBolin\Slim\HTTP\Bad_request($response);
 
     })->add(\WolfBolin\Slim\Middleware\x_auth_token());
+
+    $app->delete('/{name:world-[0-9]{10}}', function(Request $request, Response $response, $args){
+        // 获取访问参数
+        $file_name = $args['name'];
+
+        // 从COS中删除
+        try{
+            $cos_client = $this->get('cos_client');
+            $result = $cos_client->deleteObject([
+                'Bucket' => $this->get('COS')['Bucket'],
+                'Key' => 'Minecraft/world/' . $file_name.'.zip',
+            ])->toArray();
+        }catch (\Exception $e){
+            $sentry = $this->get('sentry_client');
+            $sentry->captureException($e);
+            goto Bad_request;
+        }
+
+        // 将字典数据写入请求响应
+        $result = [
+            'status' => 'success',
+            'operate' => $result['RequestId']
+        ];
+        return $response->withJson($result);
+        // 异常访问出口
+        Bad_request:
+        return \WolfBolin\Slim\HTTP\Bad_request($response);
+    })->add(\WolfBolin\Slim\Middleware\x_auth_token());
+
+
 });
 
 

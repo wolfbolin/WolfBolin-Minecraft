@@ -40,8 +40,8 @@ require __DIR__ . '/../src/util/container.php';
 require __DIR__ . '/../src/util/middleware.php';
 
 // 注册网络路由
-require __DIR__ . '/../src/backup.php';
-
+require __DIR__ . '/../src/route/info.php';
+require __DIR__ . '/../src/route/backup.php';
 
 // 运行应用程序
 try {
