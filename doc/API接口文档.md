@@ -33,6 +33,12 @@
               "time": "2019-03-28 19:31:09",
               "size": 0,
               "class": "standard"
+          },
+          {
+              "name": "world-1553801421.zip",
+              "time": "2019-03-28 19:33:09",
+              "size": 0,
+              "class": "standard"
           }
       ]
   }
@@ -87,7 +93,8 @@
   ```json
   {
       "status": "success",
-      "URL": "https://cos.mc.wolfbolin.com/Minecraft/world/world-1553801467.zip"
+      "ttl": "1 minutes",
+      "url": "https://cos.mc.wolfbolin.com/Minecraft/world/world-1553801467.zip"
   }
   ```
 
