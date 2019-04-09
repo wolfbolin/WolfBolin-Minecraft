@@ -10,23 +10,39 @@
       <div class="inner">
         <el-card class="card">
           <div slot="header" class="clearfix">
+            <span>服务概况</span>
+          </div>
+          <el-row :gutter="40">
+            <el-col class="item" :xs="24" :sm="6">
+              <v-chart :options="cpu_pie_graph" class="cpu_pie_graph"></v-chart>
+            </el-col>
+            <el-col class="item" :xs="24" :sm="6">
+              <v-chart :options="ram_pie_graph" class="ram_pie_graph"></v-chart>
+            </el-col>
+            <el-col class="item" :xs="24" :sm="6">
+              <v-chart :options="net_pie_graph" class="net_pie_graph"></v-chart>
+            </el-col>
+            <el-col class="item" :xs="24" :sm="6">
+              <v-chart :options="disk_pie_graph" class="disk_pie_graph"></v-chart>
+            </el-col>
+          </el-row>
+
+        </el-card>
+        <el-card class="card">
+          <div slot="header" class="clearfix">
+            <span>CPU用量</span>
+          </div>
+          <div ref="wb-cpu_line_graph">
+            <v-chart :options="cpu_line_graph" class="wb-cpu_line_graph"></v-chart>
+          </div>
+        </el-card>
+        <el-card class="card">
+          <div slot="header" class="clearfix">
             <span>内存用量</span>
           </div>
-          <div class="chart">
-            <v-chart :options="memory_graph" ref="echart"></v-chart>
+          <div ref="wb-ram_line_graph">
+            <v-chart :options="ram_line_graph" class="wb-ram_line_graph"></v-chart>
           </div>
-        </el-card>
-        <el-card class="card">
-          <div slot="header" class="clearfix">
-            <span>2</span>
-          </div>
-          <p>步骤内容描述</p>
-        </el-card>
-        <el-card class="card">
-          <div slot="header" class="clearfix">
-            <span>3</span>
-          </div>
-          <p>步骤内容描述</p>
         </el-card>
         <el-card class="card">
           <div slot="header" class="clearfix">
@@ -51,20 +67,31 @@
 </template>
 
 <script>
-  import echart_config from '../assets/echart_config'
+  import ram_mod from '../assets/ram_mod'
+  import cpu_mod from '../assets/cpu_mod'
+  import other_mod from '../assets/other_mod'
 
   export default {
     name: "Data",
     data() {
       return {
         backup_list: [],
-        memory_graph: echart_config['memory_graph']
+        cpu_pie_graph: cpu_mod['cpu_pie_graph'],
+        ram_pie_graph: ram_mod['ram_pie_graph'],
+        net_pie_graph: other_mod['net_pie_graph'],
+        disk_pie_graph: other_mod['disk_pie_graph'],
+        cpu_line_graph: cpu_mod['cpu_line_graph'],
+        ram_line_graph: ram_mod['ram_line_graph'],
       }
     },
     mounted() {
       this.getBackupList();
+      this.getCPUData();
+      this.getRAMData();
     },
     methods: {
+      getCPUData: cpu_mod['get_data'],
+      getRAMData: ram_mod['get_data'],
       getBackupList: function () {
         let that = this;
         this.$http.get(this.$wb_host + '/backup/list').then(function (response) {
@@ -94,10 +121,10 @@
         );
       },
       handleDownload: function () {
-        
+
       },
       handleDelete: function () {
-        
+
       }
     }
   }
@@ -106,8 +133,8 @@
 <style scoped lang="scss">
   #data-page {
     .echarts {
-      width: 1000px;
-      height: 800px;
+      width: 100%;
+      height: 100%;
     }
 
     .inner {
@@ -128,6 +155,18 @@
     .wb-content {
       .card {
         margin: 20px 0;
+        .wb-cpu_line_graph {
+          width: 100%;
+          height: 400px;
+        }
+        .wb-ram_line_graph {
+          width: 100%;
+          height: 400px;
+        }
+        .cpu_pie_graph, .ram_pie_graph, .net_pie_graph, .disk_pie_graph {
+          width: 100%;
+          height: 250px;
+        }
       }
     }
   }

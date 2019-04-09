@@ -75,61 +75,17 @@ $app->group('/info', function (App $app) {
         return \WolfBolin\Slim\HTTP\Bad_request($response);
     });
 
-    $app->get('/memory', function (Request $request, Response $response, $args) {
-        # 计算访问参数
-        $timestamp = time();
-        $time_slot = $request->getQueryParam('time', '');
-        if ($time_slot === '7days') {
-            $begin_time = $timestamp - 86400 * 7;
-        } else if ($time_slot === '30days') {
-            $begin_time = $timestamp - 86400 * 7;
-        } else {
-            goto Bad_request;
-        }
-
-        // 获取运行时间
-        $db = new MongoDB\Database($this->get('mongodb_client'), $this->get('MongoDB')['db']);
-        $collection = $db->selectCollection('log');
-        $memory_result = $collection->find(
-            [
-                'timestamp' => ['$gt' => $begin_time],
-            ],
-            [
-                'projection' => [
-                    '_id' => 0,
-                    'mem' => 1,
-                    'time' => 1,
-                    'timestamp' => 1
-                ]
-            ]
-        );
-        $memory_result = (array)$memory_result->toArray();
-        $result = [];
-        foreach ($memory_result as $item) {
-            $result [] = [
-                'num' => $item['mem']['num'],
-                'per' => $item['mem']['per'],
-                'time' => $item['time'],
-                'timestamp' => $item['timestamp']
-            ];
-        }
-
-        // 将字典数据写入请求响应
-        $result = [
-            'status' => 'success',
-            'data' => $result
-        ];
-        return $response->withJson($result);
-        // 异常访问出口
-        Bad_request:
-        return \WolfBolin\Slim\HTTP\Bad_request($response);
-    });
-
     $app->get('/cpu', function (Request $request, Response $response, $args) {
         # 计算访问参数
         $timestamp = time();
         $time_slot = $request->getQueryParam('time', '');
-        if ($time_slot === '7days') {
+        if ($time_slot === '2hours') {
+            $begin_time = $timestamp - 7200;
+        } else if ($time_slot === '12hours') {
+            $begin_time = $timestamp - 43200;
+        } else if ($time_slot === '1day') {
+            $begin_time = $timestamp - 86400;
+        } else if ($time_slot === '7days') {
             $begin_time = $timestamp - 86400 * 7;
         } else if ($time_slot === '30days') {
             $begin_time = $timestamp - 86400 * 7;
@@ -157,7 +113,63 @@ $app->group('/info', function (App $app) {
         $result = [];
         foreach ($memory_result as $item) {
             $result [] = [
-                'cpu' => $item['cpu'],
+                'num' => $item['cpu'],
+                'time' => $item['time'],
+                'timestamp' => $item['timestamp']
+            ];
+        }
+
+        // 将字典数据写入请求响应
+        $result = [
+            'status' => 'success',
+            'data' => $result
+        ];
+        return $response->withJson($result);
+        // 异常访问出口
+        Bad_request:
+        return \WolfBolin\Slim\HTTP\Bad_request($response);
+    });
+
+    $app->get('/ram', function (Request $request, Response $response, $args) {
+        # 计算访问参数
+        $timestamp = time();
+        $time_slot = $request->getQueryParam('time', '');
+        if ($time_slot === '2hours') {
+            $begin_time = $timestamp - 7200;
+        } else if ($time_slot === '12hours') {
+            $begin_time = $timestamp - 43200;
+        } else if ($time_slot === '1day') {
+            $begin_time = $timestamp - 86400;
+        } else if ($time_slot === '7days') {
+            $begin_time = $timestamp - 86400 * 7;
+        } else if ($time_slot === '30days') {
+            $begin_time = $timestamp - 86400 * 7;
+        } else {
+            goto Bad_request;
+        }
+
+        // 获取运行时间
+        $db = new MongoDB\Database($this->get('mongodb_client'), $this->get('MongoDB')['db']);
+        $collection = $db->selectCollection('log');
+        $memory_result = $collection->find(
+            [
+                'timestamp' => ['$gt' => $begin_time],
+            ],
+            [
+                'projection' => [
+                    '_id' => 0,
+                    'ram' => 1,
+                    'time' => 1,
+                    'timestamp' => 1
+                ]
+            ]
+        );
+        $memory_result = (array)$memory_result->toArray();
+        $result = [];
+        foreach ($memory_result as $item) {
+            $result [] = [
+                'num' => $item['ram']['num'],
+                'per' => $item['ram']['per'],
                 'time' => $item['time'],
                 'timestamp' => $item['timestamp']
             ];

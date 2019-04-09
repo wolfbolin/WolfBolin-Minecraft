@@ -42,7 +42,7 @@
 
         <div class="wb-timeline">
           <el-card v-for="(num, index) in time_list" :key="index" class="wb-num">{{ num }}</el-card>
-          <el-card class="wb-num">秒</el-card>
+          <el-card class="wb-num">小时</el-card>
         </div>
       </div>
     </section>
@@ -101,14 +101,12 @@
       },
       setTimer: function () {
         this.timer = setInterval(() => {
-          let dt = Math.round(new Date().getTime()/1000) - this.start_time;
+          let dt = Math.round(new Date().getTime() / 1000) - this.start_time;
+          dt = parseInt(dt / 3600);
           this.time_list = [];
-          while(dt > 0){
+          while (dt > 0) {
             this.time_list.unshift(dt % 10);
-            dt = parseInt(dt /10);
-          }
-          while(this.time_list.length < 6){
-            this.time_list.unshift(0);
+            dt = parseInt(dt / 10);
           }
         }, 1000)
       }

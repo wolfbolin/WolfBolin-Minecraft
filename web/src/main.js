@@ -5,10 +5,13 @@ import App from './App';
 import axios from 'axios';
 import router from './router';
 import VueI18n from 'vue-i18n';
+import 'echarts/lib/chart/pie';
 import 'echarts/lib/chart/bar';
 import 'echarts/lib/chart/line';
 import ECharts from 'vue-echarts';
 import ElementUI from 'element-ui';
+import 'echarts/lib/component/title';
+import 'echarts/lib/component/tooltip';
 import 'element-ui/lib/theme-chalk/index.css';
 import 'element-ui/lib/theme-chalk/display.css';
 

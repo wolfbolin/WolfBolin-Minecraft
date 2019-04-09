@@ -49,7 +49,7 @@ try:
             'timestamp': int(time.time()),
             'time': time_now,
             'cpu': info[2],
-            'mem': {
+            'ram': {
                 'num': info[3],
                 'per': info[6]
             },
