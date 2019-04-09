@@ -8,8 +8,15 @@
     ],
     "require": {
         "slim/slim": "^3.12",
+        "mongodb/mongodb": "^1.4",
         "qcloud/cos-sdk-v5": ">=1.0",
         "sentry/sentry": "^1.0",
         "ext-zip": "*"
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
     }
 }

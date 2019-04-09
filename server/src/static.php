@@ -7,6 +7,15 @@
  */
 
 return [
+    'Info_key' => [
+        'update_time',
+        'service_state',
+        'service_notice',
+        'start_time',
+        'stop_time',
+        'server_port',
+        'restart_count'
+    ],
     'File_info' => [
         'name' => '',
         'time' => '',

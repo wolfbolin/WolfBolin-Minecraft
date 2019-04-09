@@ -24,6 +24,24 @@ $container['sentry_client'] = function (Container $a) {
     return $sentry;
 };
 
+// MongoDB组件初始化
+$container['mongodb_client'] = function (Container $a) {
+    $unix = "mongodb://" . ($a->get('MongoDB')['host']);
+    if (!empty($a->get('MongoDB')['port'])) {
+        $unix .= ":" . $a->get('MongoDB')['port'];
+    }
+    $uriOptions = [];
+    foreach ($a->get('MongoDB') as $key => $value) {
+        if (!in_array($key, ['occam', 'entity', 'host', 'port']) && !empty($value)) {
+            $uriOptions[$key] = $value;
+        }
+    }
+
+    $client = new MongoDB\Driver\Manager($unix, $uriOptions);
+
+    return $client;
+};
+
 // COS组建初始化
 $container['cos_client'] = function (Container $a) {
     $secret_id = $a->get('COS')['Secret_Id'];

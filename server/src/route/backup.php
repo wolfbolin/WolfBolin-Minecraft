@@ -37,10 +37,11 @@ $app->group('/backup', function (App $app) {
         if (isset($file_list['Contents'])) {
             foreach ($file_list['Contents'] as $item) {
                 $file_info = $this->get('File_info');
+                $file_info['index'] = substr($item['Key'], 16, -4);
                 $file_info['name'] = substr($item['Key'], 16);
                 $file_info['time'] = substr(str_replace('T', ' ', $item['LastModified']), 0, -5);
-                $file_info['size'] = round(intval($item['Size']) / 1000000, 2);
-                $file_info['class'] = strtolower($item['StorageClass']);
+                $file_info['size'] = round(intval($item['Size']) / 1000000, 2) . 'MB';
+                $file_info['class'] = strtolower($item['StorageClass']) == 'standard' ? '标准储存' : '低频储存';
                 $result['data'] [] = $file_info;
                 $result['info']['count']++;
             }
@@ -173,7 +174,7 @@ $app->group('/backup', function (App $app) {
     })->add(\WolfBolin\Slim\Middleware\x_auth_token());
 
 
-});
+})->add(\WolfBolin\Slim\Middleware\http_cors());
 
 
 

@@ -28,3 +28,11 @@ function x_auth_token() {
     };
     return $result;
 }
+
+function http_cors(){
+    $result = function (Request $request, Response $response, $next) {
+        $response = $next($request, $response);
+        return $response->withHeader('Access-Control-Allow-Origin', '*');
+    };
+    return $result;
+}
