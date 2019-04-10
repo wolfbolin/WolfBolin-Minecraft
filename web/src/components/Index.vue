@@ -1,11 +1,13 @@
 <template>
   <div id="index-page">
     <section class="wb-cover">
-      <el-carousel :height="cover_height">
-        <el-carousel-item v-for="item in cover_list" :key="item">
-          <img :src="'../../static/image/' + item"/>
-        </el-carousel-item>
-      </el-carousel>
+      <div class="inner" ref="cover">
+        <el-carousel :height="cover_height">
+          <el-carousel-item v-for="item in cover_list" :key="item">
+            <img :src="'../../static/image/' + item"/>
+          </el-carousel-item>
+        </el-carousel>
+      </div>
     </section>
     <section class="wb-section">
       <div class="inner">
@@ -56,7 +58,8 @@
       return {
         timer: null,
         cover_height: '0px',
-        cover_list: ['pic1.png', 'pic2.png', 'pic3.png'],
+        cover_list: ['pic1.png', 'pic2.png', 'pic3.png', 'pic4.png', 'pic5.png',
+          'pic6.png', 'pic7.png', 'pic8.png', 'pic9.png'],
         start_time: 1546272000,
         time_list: [0, 0, 0, 1, 2]
       }
@@ -72,9 +75,9 @@
     },
     methods: {
       setCarouselHeight: function () {
-        let clientWidth = document.documentElement.clientWidth;
-        // let coverWidth = this.$refs.cover.clientWidth;
-        let coverHeight = clientWidth * 0.5625;
+        // let clientWidth = document.documentElement.clientWidth;
+        let coverWidth = this.$refs.cover.clientWidth;
+        let coverHeight = coverWidth * 0.5625;
         this.cover_height = `${coverHeight}px`;
       },
       getStartTime: function () {
@@ -122,7 +125,7 @@
     }
 
     .wb-cover {
-      padding-top: 60px;
+      padding-top: 100px;
       img {
         width: 100%;
         height: 100%;
@@ -175,7 +178,6 @@
           font-weight: 600;
         }
       }
-
     }
   }
 </style>

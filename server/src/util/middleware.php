@@ -20,7 +20,7 @@ function x_auth_token() {
         }
 
         // 处理Token信息
-        if ($auth_token[0]==$this->get('Access_token')) {
+        if ($auth_token[0] == $this->get('Access_token')) {
             return $next($request, $response);
         } else {
             return \WolfBolin\Slim\HTTP\Unauthorized3($response);
@@ -29,10 +29,13 @@ function x_auth_token() {
     return $result;
 }
 
-function http_cors(){
+function http_cors() {
     $result = function (Request $request, Response $response, $next) {
         $response = $next($request, $response);
-        return $response->withHeader('Access-Control-Allow-Origin', '*');
+        return $response
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Auth-Token, Content-Type, Accept, Origin')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     };
     return $result;
 }

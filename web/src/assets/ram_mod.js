@@ -26,7 +26,7 @@ export default {
         });
       }
     }).catch(function (err) {
-      console.log(err);
+        console.log(err);
         that.$notify.error({
           title: '错误',
           message: '您似乎与服务器断开链接',
@@ -99,14 +99,14 @@ export default {
     ]
   },
   ram_pie_graph: {
-    title : {
+    title: {
       text: 'RAM占用量',
-      left:'center',
+      left: 'center',
       top: 'bottom'
     },
     tooltip: {
       trigger: 'item',
-      formatter: "{b}: {d}%"
+      formatter: "{b}: {c}MB ({d}%)"
     },
     series: [
       {
@@ -120,8 +120,8 @@ export default {
           }
         },
         data: [
-          {value: 12, name: '占用',itemStyle: {color: '#0080FF'}},
-          {value: 88, name: '闲置',itemStyle: {color: '#808080'}}
+          {value: 12, name: '占用', itemStyle: {color: '#0080FF'}},
+          {value: 88, name: '空闲', itemStyle: {color: '#808080'}}
         ]
       }
     ]

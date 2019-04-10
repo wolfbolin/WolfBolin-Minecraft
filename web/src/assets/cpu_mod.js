@@ -36,6 +36,7 @@ export default {
   cpu_line_graph: {
     tooltip: {
       trigger: 'axis',
+      formatter: "使用量: {c}%",
       axisPointer: {
         type: 'cross',
         crossStyle: {
@@ -83,7 +84,7 @@ export default {
         },
         data: [
           {value: 12, name: '占用',itemStyle: {color: '#0080FF'}},
-          {value: 88, name: '闲置',itemStyle: {color: '#808080'}}
+          {value: 88, name: '空闲',itemStyle: {color: '#808080'}}
         ]
       }
     ]

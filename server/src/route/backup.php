@@ -54,6 +54,15 @@ $app->group('/backup', function (App $app) {
         return \WolfBolin\Slim\HTTP\Server_error($response);
     });
 
+    $app->options('/{name:world-[0-9]{10}}', function (Request $request, Response $response) {
+        $result = ['status' => 'success'];
+        return $response->withJson($result);
+    });
+    $app->options('/world', function (Request $request, Response $response) {
+        $result = ['status' => 'success'];
+        return $response->withJson($result);
+    });
+
     $app->get('/{name:world-[0-9]{10}}', function (Request $request, Response $response, $args) {
         // 获取访问参数
         $file_name = $args['name'];
@@ -103,14 +112,10 @@ $app->group('/backup', function (App $app) {
                 $zip->addFile($data_path . 'server.properties', 'server.properties');
                 $zip->close();
             } else {
-                $sentry = $this->get('sentry_client');
-                $sentry->captureMessage("数据文件不存在");
-                goto Server_error;
+                throw new Exception("数据文件不存在");
             }
         } else {
-            $sentry = $this->get('sentry_client');
-            $sentry->captureMessage("数据压缩过程出现异常");
-            goto Server_error;
+            throw new Exception("数据压缩过程出现异常");
         }
 
         // 上传至COS
